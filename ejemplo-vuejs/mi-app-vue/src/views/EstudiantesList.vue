@@ -75,11 +75,15 @@ export default {
       }
     },
     confirmDelete(estudiante) {
-      if (confirm(`¿Estás seguro de que quieres eliminar a ${estudiante.nombre} ${estudiante.apellido}?`)) {
+      if (
+        confirm(
+          `¿Estás seguro de que quieres eliminar a ${estudiante.nombre} ${estudiante.apellido}?`
+        )
+      ) {
         this.deleteEstudiante(estudiante.url);
       }
-  },
-  async deleteEstudiante(estudianteUrl) {
+    },
+    async deleteEstudiante(estudianteUrl) {
       try {
         // La URL completa ya viene en estudiante.url, la usamos directamente
         await api.delete(estudianteUrl);
