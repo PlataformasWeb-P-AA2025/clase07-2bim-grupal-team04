@@ -11,7 +11,40 @@
       <h4>Números Telefónicos:</h4>
       <ul v-if="numerosTelefonicos.length">
         <li v-for="numero in numerosTelefonicos" :key="numero.url">
-          {{ numero.telefono }} ({{ numero.tipo }})
+          <div v-if="!numero.isEditing" class="telefono-display">
+            {{ numero.telefono }} ({{ numero.tipo }})
+            <div class="telefono-actions">
+              <button @click="startEditTelefono(numero)" class="edit-telefono-button"
+              >
+                Editar
+              </button>
+              <button @click="confirmDeleteTelefono(numero)" class="delete-telefono-button"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+          <div v-else class="telefono-edit-form">
+            <input v-model="numero.telefono" placeholder="Número" />
+            <input
+              v-model="numero.tipo"
+              placeholder="Tipo (ej. Celular, Casa)"
+            />
+            <div class="telefono-actions">
+              <button
+                @click="saveTelefono(numero)"
+                class="save-telefono-button"
+              >
+                Guardar
+              </button>
+              <button
+                @click="cancelEditTelefono(numero)"
+                class="cancel-telefono-button"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
         </li>
       </ul>
       <p v-else>No tiene números telefónicos registrados.</p>

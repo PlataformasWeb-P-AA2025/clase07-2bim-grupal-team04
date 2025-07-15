@@ -18,6 +18,22 @@
           {{ estudiante.nombre }} {{ estudiante.apellido }} (Cédula:
           {{ estudiante.cedula }})
         </router-link>
+
+        <div class="actions">
+          <router-link
+            :to="{
+              name: 'EstudianteEdit', // Necesitarás definir esta ruta en router/index.js
+              params: { estudianteUrl: encodeURIComponent(estudiante.url) },
+            }"
+            class="edit-button"
+          >
+            Editar
+          </router-link>
+
+          <button @click="confirmDelete(estudiante)" class="delete-button">
+            Eliminar
+          </button>
+        </div>
       </li>
     </ul>
     <p v-else>No hay estudiantes registrados.</p>
@@ -58,7 +74,25 @@ export default {
         this.loading = false;
       }
     },
-    // Ya no necesitamos getEstudianteId() si pasamos la URL completa
+    confirmDelete(estudiante) {
+      if (confirm(`¿Estás seguro de que quieres eliminar a ${estudiante.nombre} ${estudiante.apellido}?`)) {
+        this.deleteEstudiante(estudiante.url);
+      }
+  },
+  async deleteEstudiante(estudianteUrl) {
+      try {
+        // La URL completa ya viene en estudiante.url, la usamos directamente
+        await api.delete(estudianteUrl);
+        console.log("Estudiante eliminado:", estudianteUrl);
+        // Actualizar la lista después de la eliminación exitosa
+        this.estudiantes = this.estudiantes.filter(
+          (est) => est.url !== estudianteUrl
+        );
+      } catch (err) {
+        console.error("Error al eliminar estudiante:", err.response || err);
+        this.error = "No se pudo eliminar el estudiante. Inténtalo de nuevo.";
+      }
+    },
   },
 };
 </script>
@@ -102,6 +136,52 @@ ul {
 
 .estudiante-item a:hover {
   text-decoration: underline;
+}
+
+.estudiante-item .estudiante-link {
+  text-decoration: none;
+  color: #007bff;
+  font-weight: bold;
+  flex-grow: 1; /* Permite que el enlace ocupe el espacio restante */
+}
+
+.estudiante-item .estudiante-link:hover {
+  text-decoration: underline;
+}
+
+.actions {
+  display: flex;
+  gap: 10px; /* Espacio entre los botones */
+}
+
+.edit-button,
+.delete-button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+  text-decoration: none; /* Para el router-link como botón */
+  display: inline-block; /* Para que el router-link se comporte como un botón */
+  text-align: center;
+}
+
+.edit-button {
+  background-color: #ffc107; /* Amarillo para editar */
+  color: #333;
+}
+
+.edit-button:hover {
+  background-color: #e0a800;
+}
+
+.delete-button {
+  background-color: #dc3545; /* Rojo para eliminar */
+  color: white;
+}
+
+.delete-button:hover {
+  background-color: #c82333;
 }
 
 .add-button {
